@@ -94,7 +94,8 @@ export const PremiumAdmin = ({ onLogout }: PremiumAdminProps) => {
       if (fetchError) throw fetchError
 
       const currentExpiry = new Date(user.expires_at)
-      const newExpiry = new Date(Math.max(currentExpiry.getTime(), Date.now()))
+      const now = new Date()
+      const newExpiry = new Date(Math.max(currentExpiry.getTime(), now.getTime()))
       newExpiry.setDate(newExpiry.getDate() + days)
 
       const { error } = await supabase
@@ -109,6 +110,8 @@ export const PremiumAdmin = ({ onLogout }: PremiumAdminProps) => {
         description: `${userName}'s premium extended by ${days} days`
       })
 
+      // Clear the extend days input for this user
+      setExtendDays(prev => ({ ...prev, [userId]: 30 }))
       loadUsers()
     } catch (error) {
       console.error('Error extending premium:', error)
@@ -240,7 +243,7 @@ export const PremiumAdmin = ({ onLogout }: PremiumAdminProps) => {
                     <Input
                       type="number"
                       placeholder="Days"
-                      value={extendDays[user.id] || ''}
+                      value={extendDays[user.id] || 30}
                       onChange={(e) => setExtendDays({ 
                         ...extendDays, 
                         [user.id]: parseInt(e.target.value) || 30 

@@ -6,7 +6,8 @@ import { QuizUploader } from '@/components/QuizUploader'
 import { TestManager } from '@/components/TestManager'
 import { PremiumAdmin } from '@/components/PremiumAdmin'
 import { AdminLogin } from '@/components/AdminLogin'
-import { Upload, List, Settings } from 'lucide-react'
+import { QuizTaker } from '@/components/QuizTaker'
+import { Upload, List, Settings, PlayCircle } from 'lucide-react'
 
 const Index = () => {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false)
@@ -15,12 +16,16 @@ const Index = () => {
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2">Quiz Forge Upload</h1>
-          <p className="text-gray-600">Upload and manage quiz content with ease</p>
+          <h1 className="text-4xl font-bold mb-2">Quiz Forge</h1>
+          <p className="text-gray-600">Upload, manage, and take quizzes with ease</p>
         </div>
 
-        <Tabs defaultValue="upload" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
+        <Tabs defaultValue="quiz" className="w-full">
+          <TabsList className="grid w-full grid-cols-4 mb-8">
+            <TabsTrigger value="quiz" className="flex items-center gap-2">
+              <PlayCircle className="w-4 h-4" />
+              Take Quiz
+            </TabsTrigger>
             <TabsTrigger value="upload" className="flex items-center gap-2">
               <Upload className="w-4 h-4" />
               Upload Quiz
@@ -34,6 +39,10 @@ const Index = () => {
               Premium Admin
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="quiz" className="space-y-6">
+            <QuizTaker />
+          </TabsContent>
 
           <TabsContent value="upload" className="space-y-6">
             <QuizUploader />
