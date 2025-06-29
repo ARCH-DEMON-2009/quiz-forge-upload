@@ -17,7 +17,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) =
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
 
-  const handlePayment = async (isTestMode: boolean = true) => {
+  const handlePayment = async () => {
     if (!userName.trim()) {
       toast({
         title: "Name required",
@@ -30,7 +30,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) =
     setIsProcessing(true);
     
     try {
-      const success = await processPayment(userName.trim(), isTestMode);
+      const success = await processPayment(userName.trim());
       if (success) {
         onClose();
       }
@@ -61,7 +61,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) =
         
         <div className="space-y-6">
           <div className="text-center">
-            <div className="text-3xl font-bold text-gray-800 mb-2">₹59</div>
+            <div className="text-3xl font-bold text-gray-800 mb-2">₹299</div>
             <div className="text-gray-600">30 Days Premium Access</div>
           </div>
 
@@ -80,25 +80,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) =
               />
             </div>
 
-            <div className="space-y-2">
-              <Button 
-                onClick={() => handlePayment(true)}
-                disabled={isProcessing || !userName.trim()}
-                className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3"
-              >
-                <CreditCard className="w-4 h-4 mr-2" />
-                {isProcessing ? 'Processing...' : 'Test Purchase (Free)'}
-              </Button>
-
-              <Button 
-                onClick={() => handlePayment(false)}
-                disabled={isProcessing || !userName.trim()}
-                className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold py-3"
-              >
-                <CreditCard className="w-4 h-4 mr-2" />
-                {isProcessing ? 'Processing...' : 'Pay ₹59'}
-              </Button>
-            </div>
+            <Button 
+              onClick={handlePayment}
+              disabled={isProcessing || !userName.trim()}
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold py-3"
+            >
+              <CreditCard className="w-4 h-4 mr-2" />
+              {isProcessing ? 'Processing...' : 'Pay ₹299'}
+            </Button>
           </div>
 
           <div className="text-xs text-gray-500 text-center">

@@ -26,24 +26,7 @@ export const initializeRazorpay = (): Promise<boolean> => {
   });
 };
 
-export const processPayment = async (userNameForPremium: string, isTestMode: boolean = true): Promise<boolean> => {
-  // For testing - skip actual payment and directly create premium user
-  if (isTestMode) {
-    console.log('Test mode: Creating premium user without payment');
-    const testPaymentId = `test_${Date.now()}`;
-    const success = await createPremiumUser(userNameForPremium, testPaymentId);
-    
-    if (success) {
-      alert('Test purchase successful! You now have premium access.');
-      window.location.reload();
-      return true;
-    } else {
-      alert('Test purchase failed. Please try again.');
-      return false;
-    }
-  }
-
-  // Production payment flow
+export const processPayment = async (userNameForPremium: string): Promise<boolean> => {
   const isRazorpayLoaded = await initializeRazorpay();
   
   if (!isRazorpayLoaded) {
@@ -54,7 +37,7 @@ export const processPayment = async (userNameForPremium: string, isTestMode: boo
   return new Promise((resolve) => {
     const options = {
       key: 'rzp_test_o1mGGxGdk4rBCk', // Your actual Razorpay key
-      amount: 5900, // ₹59 in paise
+      amount: 29900, // ₹299 in paise
       currency: 'INR',
       name: 'Test Sagar',
       description: 'Premium Access - 30 Days',
