@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -46,7 +45,7 @@ export const PremiumBanner: React.FC = () => {
 
               <div className="text-center">
                 <div className="mb-4">
-                  <span className="text-3xl font-bold text-gray-800">₹299</span>
+                  <span className="text-3xl font-bold text-gray-800">₹59</span>
                   <span className="text-gray-600 ml-2">for 30 days</span>
                 </div>
                 <Button 
