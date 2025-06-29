@@ -6,11 +6,12 @@ import { QuizUploader } from '@/components/QuizUploader'
 import { TestManager } from '@/components/TestManager'
 import { PremiumAdmin } from '@/components/PremiumAdmin'
 import { AdminLogin } from '@/components/AdminLogin'
-import { QuizTaker } from '@/components/QuizTaker'
 import { Upload, List, Settings, PlayCircle } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 const Index = () => {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false)
+  const navigate = useNavigate()
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
@@ -20,12 +21,19 @@ const Index = () => {
           <p className="text-gray-600">Upload, manage, and take quizzes with ease</p>
         </div>
 
-        <Tabs defaultValue="quiz" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8">
-            <TabsTrigger value="quiz" className="flex items-center gap-2">
-              <PlayCircle className="w-4 h-4" />
-              Take Quiz
-            </TabsTrigger>
+        {/* Take Quiz Button */}
+        <div className="flex justify-center mb-8">
+          <Button 
+            onClick={() => navigate('/quiz')}
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-8 py-3 text-lg rounded-full shadow-lg transform hover:scale-105 transition-all"
+          >
+            <PlayCircle className="w-6 h-6" />
+            Take Quiz
+          </Button>
+        </div>
+
+        <Tabs defaultValue="upload" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-8">
             <TabsTrigger value="upload" className="flex items-center gap-2">
               <Upload className="w-4 h-4" />
               Upload Quiz
@@ -39,10 +47,6 @@ const Index = () => {
               Premium Admin
             </TabsTrigger>
           </TabsList>
-
-          <TabsContent value="quiz" className="space-y-6">
-            <QuizTaker />
-          </TabsContent>
 
           <TabsContent value="upload" className="space-y-6">
             <QuizUploader />
