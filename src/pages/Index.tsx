@@ -6,41 +6,20 @@ import { BookOpen, Beaker, Calculator, Crown, Clock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { TrialStatus } from '@/components/TrialStatus'
 import { PremiumBanner } from '@/components/PremiumBanner'
+import { checkTrialStatus, TrialStatus as TrialStatusType } from '@/services/trialService'
 
 const Index = () => {
   const navigate = useNavigate()
-  const [deviceId, setDeviceId] = useState<string>('')
-  const [trialStatus, setTrialStatus] = useState<'active' | 'expired' | 'premium' | 'loading'>('loading')
+  const [trialStatus, setTrialStatus] = useState<TrialStatusType>('loading')
 
   useEffect(() => {
-    // Generate or get device ID
-    let storedDeviceId = localStorage.getItem('device_id')
-    if (!storedDeviceId) {
-      storedDeviceId = 'device_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36)
-      localStorage.setItem('device_id', storedDeviceId)
+    const loadTrialStatus = async () => {
+      const status = await checkTrialStatus()
+      setTrialStatus(status)
     }
-    setDeviceId(storedDeviceId)
     
-    // Check trial/premium status
-    checkTrialStatus(storedDeviceId)
+    loadTrialStatus()
   }, [])
-
-  const checkTrialStatus = async (deviceId: string) => {
-    // This would check Supabase for premium/trial status
-    // For now, simulate the check
-    setTimeout(() => {
-      const hasActiveTrial = localStorage.getItem('trial_active') === 'true'
-      const isPremium = localStorage.getItem('is_premium') === 'true'
-      
-      if (isPremium) {
-        setTrialStatus('premium')
-      } else if (hasActiveTrial) {
-        setTrialStatus('active')
-      } else {
-        setTrialStatus('expired')
-      }
-    }, 1000)
-  }
 
   const subjects = [
     {
@@ -68,8 +47,7 @@ const Index = () => {
 
   const handleSubjectClick = (subjectId: string) => {
     if (trialStatus === 'expired') {
-      // Show payment modal or redirect to premium
-      return
+      return // Prevent navigation - banner will show payment option
     }
     navigate(`/tests/${subjectId}`)
   }
