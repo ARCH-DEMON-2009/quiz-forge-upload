@@ -41,7 +41,7 @@ export const processPayment = async (userNameForPremium: string): Promise<boolea
       currency: 'INR',
       name: 'Test Sagar',
       description: 'Premium Access - 30 Days',
-      image: '/favicon.ico',
+      image: '/logo.jpg',
       handler: async function (response: any) {
         console.log('Payment successful:', response);
         

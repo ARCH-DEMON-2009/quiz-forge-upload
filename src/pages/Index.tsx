@@ -6,6 +6,7 @@ import { BookOpen, Beaker, Calculator, Crown, Clock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { TrialStatus } from '@/components/TrialStatus'
 import { PremiumBanner } from '@/components/PremiumBanner'
+import { Footer } from '@/components/Footer'
 import { checkTrialStatus, TrialStatus as TrialStatusType } from '@/services/trialService'
 
 const Index = () => {
@@ -70,6 +71,13 @@ const Index = () => {
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative max-w-6xl mx-auto px-4 py-12">
           <div className="text-center">
+            <div className="flex justify-center mb-6">
+              <img 
+                src="/logo.jpg" 
+                alt="Test Sagar Logo" 
+                className="h-20 w-20 rounded-full shadow-lg"
+              />
+            </div>
             <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
               Test Sagar
             </h1>
@@ -159,6 +167,8 @@ const Index = () => {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   )
 }

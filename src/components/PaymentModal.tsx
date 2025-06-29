@@ -50,7 +50,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) =
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 justify-center">
+            <img src="/logo.jpg" alt="Test Sagar" className="w-8 h-8 rounded-full" />
             <Crown className="w-6 h-6 text-yellow-500" />
             Upgrade to Premium
           </DialogTitle>
@@ -91,7 +92,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) =
           </div>
 
           <div className="text-xs text-gray-500 text-center">
-            Secure payment powered by Razorpay
+            Secure payment powered by Test Sagar
           </div>
         </div>
       </DialogContent>
