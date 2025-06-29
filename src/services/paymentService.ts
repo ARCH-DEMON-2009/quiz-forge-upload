@@ -36,7 +36,7 @@ export const processPayment = async (userNameForPremium: string): Promise<boolea
 
   return new Promise((resolve) => {
     const options = {
-      key: 'rzp_test_9999999999', // Replace with your actual Razorpay key
+      key: 'rzp_test_o1mGGxGdk4rBCk', // Your actual Razorpay key
       amount: 29900, // ₹299 in paise
       currency: 'INR',
       name: 'Test Sagar',

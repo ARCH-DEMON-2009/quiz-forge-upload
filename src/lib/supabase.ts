@@ -37,4 +37,5 @@ export interface PremiumUser {
 export interface UserTrial {
   device_id: string
   trial_start: string
+  delete_trial?: string // New field for admin trial deletion
 }

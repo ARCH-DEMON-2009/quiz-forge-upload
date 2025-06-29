@@ -5,6 +5,7 @@ import { getOrCreateDeviceId } from './deviceService';
 export interface UserTrial {
   device_id: string;
   trial_start: string;
+  delete_trial?: string; // New field for trial deletion
 }
 
 export interface PremiumUser {
@@ -47,6 +48,20 @@ export const checkTrialStatus = async (): Promise<TrialStatus> => {
 
     if (trialError && trialError.code !== 'PGRST116') {
       console.error('Error checking trial status:', trialError);
+      return 'expired';
+    }
+
+    // Check if trial should be deleted (admin set delete_trial to 'yes')
+    if (trial && trial.delete_trial === 'yes') {
+      console.log('Trial marked for deletion, removing...');
+      const { error: deleteError } = await supabase
+        .from('user_trials')
+        .delete()
+        .eq('device_id', deviceId);
+      
+      if (deleteError) {
+        console.error('Error deleting trial:', deleteError);
+      }
       return 'expired';
     }
 
