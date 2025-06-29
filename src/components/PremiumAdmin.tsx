@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,7 +16,7 @@ export const PremiumAdmin = ({ onLogout }: PremiumAdminProps) => {
   const [users, setUsers] = useState<PremiumUser[]>([])
   const [loading, setLoading] = useState(true)
   const [newUser, setNewUser] = useState({ name: '', device: '', days: 30 })
-  const [extendDays, setExtendDays] = useState<{ [key: number]: number }>({})
+  const [extendDays, setExtendDays] = useState<{ [key: string]: number }>({})
   const { toast } = useToast()
 
   const loadUsers = async () => {
@@ -23,7 +24,7 @@ export const PremiumAdmin = ({ onLogout }: PremiumAdminProps) => {
       const { data, error } = await supabase
         .from('premium_users')
         .select('*')
-        .order('created_at', { ascending: false })
+        .order('purchased_at', { ascending: false })
 
       if (error) throw error
       setUsers(data || [])
@@ -57,7 +58,7 @@ export const PremiumAdmin = ({ onLogout }: PremiumAdminProps) => {
         .from('premium_users')
         .insert({
           name: newUser.name.trim(),
-          device: newUser.device.trim(),
+          device_id: newUser.device.trim(),
           expires_at: expiresAt.toISOString()
         })
 
@@ -80,7 +81,7 @@ export const PremiumAdmin = ({ onLogout }: PremiumAdminProps) => {
     }
   }
 
-  const extendPremium = async (userId: number, userName: string) => {
+  const extendPremium = async (userId: string, userName: string) => {
     const days = extendDays[userId] || 30
     
     try {
@@ -119,7 +120,7 @@ export const PremiumAdmin = ({ onLogout }: PremiumAdminProps) => {
     }
   }
 
-  const deleteUser = async (userId: number, userName: string) => {
+  const deleteUser = async (userId: string, userName: string) => {
     if (!confirm(`Are you sure you want to delete ${userName}?`)) return
 
     try {
@@ -229,7 +230,7 @@ export const PremiumAdmin = ({ onLogout }: PremiumAdminProps) => {
                         </span>
                       )}
                     </div>
-                    <p className="text-gray-600 text-sm">Device: {user.device}</p>
+                    <p className="text-gray-600 text-sm">Device: {user.device_id}</p>
                     <div className="flex items-center gap-1 text-sm text-gray-500 mt-1">
                       <Calendar className="w-4 h-4" />
                       Expires: {new Date(user.expires_at).toLocaleDateString()}
