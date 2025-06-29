@@ -13,7 +13,6 @@ export interface Test {
   description: string
   created_at: string
   total_questions: number
-  subject?: string
 }
 
 export interface Question {
@@ -36,9 +35,6 @@ export interface PremiumUser {
 }
 
 export interface UserTrial {
-  id: string
   device_id: string
-  started_at: string
-  expires_at: string
-  is_active: boolean
+  trial_start: string
 }

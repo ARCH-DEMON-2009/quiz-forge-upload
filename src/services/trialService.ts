@@ -3,11 +3,8 @@ import { supabase } from '@/lib/supabase';
 import { getOrCreateDeviceId } from './deviceService';
 
 export interface UserTrial {
-  id: string;
   device_id: string;
-  started_at: string;
-  expires_at: string;
-  is_active: boolean;
+  trial_start: string;
 }
 
 export interface PremiumUser {
@@ -56,15 +53,12 @@ export const checkTrialStatus = async (): Promise<TrialStatus> => {
     if (!trial) {
       // Create new trial
       const startDate = new Date();
-      const endDate = new Date(startDate.getTime() + 3 * 24 * 60 * 60 * 1000); // 3 days
 
       const { error: insertError } = await supabase
         .from('user_trials')
         .insert({
           device_id: deviceId,
-          started_at: startDate.toISOString(),
-          expires_at: endDate.toISOString(),
-          is_active: true
+          trial_start: startDate.toISOString()
         });
 
       if (insertError) {
@@ -75,11 +69,12 @@ export const checkTrialStatus = async (): Promise<TrialStatus> => {
       return 'active';
     }
 
-    // Check if trial is still active
+    // Check if trial is still active (3 days from start)
+    const trialStart = new Date(trial.trial_start);
+    const trialEnd = new Date(trialStart.getTime() + 3 * 24 * 60 * 60 * 1000); // 3 days
     const now = new Date();
-    const expiresAt = new Date(trial.expires_at);
     
-    return now < expiresAt ? 'active' : 'expired';
+    return now < trialEnd ? 'active' : 'expired';
   } catch (error) {
     console.error('Error in checkTrialStatus:', error);
     return 'expired';

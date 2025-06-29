@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, Play, Clock, Target, BookOpen } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useToast } from '@/hooks/use-toast'
+import { checkTrialStatus, TrialStatus } from '@/services/trialService'
+import { PremiumBanner } from '@/components/PremiumBanner'
 
 interface Test {
   id: string
@@ -21,39 +23,83 @@ const TestList = () => {
   const navigate = useNavigate()
   const [tests, setTests] = useState<Test[]>([])
   const [loading, setLoading] = useState(true)
+  const [trialStatus, setTrialStatus] = useState<TrialStatus>('loading')
   const { toast } = useToast()
 
   useEffect(() => {
-    const fetchTests = async () => {
-      try {
-        console.log('Fetching tests for subject:', subject)
-        
-        const { data, error } = await supabase
-          .from('tests')
-          .select('*')
-          .order('created_at', { ascending: false })
-
-        if (error) {
-          console.error('Supabase error:', error)
-          throw error
-        }
-
-        console.log('Fetched tests:', data)
-        setTests(data || [])
-      } catch (error) {
-        console.error('Error fetching tests:', error)
-        toast({
-          title: "Failed to load tests",
-          description: error instanceof Error ? error.message : "Unknown error",
-          variant: "destructive"
-        })
-      } finally {
-        setLoading(false)
-      }
+    const loadData = async () => {
+      // Check trial status first
+      const status = await checkTrialStatus()
+      setTrialStatus(status)
+      
+      // Then fetch tests
+      await fetchTests()
     }
-
-    fetchTests()
+    
+    loadData()
   }, [subject, toast])
+
+  const fetchTests = async () => {
+    try {
+      console.log('Fetching tests for subject:', subject)
+      
+      // Get all questions for this subject first to find which tests have them
+      const { data: questions, error: questionsError } = await supabase
+        .from('questions')
+        .select('test_id')
+        .eq('subject', subject?.charAt(0).toUpperCase() + subject?.slice(1))
+
+      if (questionsError) {
+        console.error('Error fetching questions:', questionsError)
+        throw questionsError
+      }
+
+      // Get unique test IDs
+      const testIds = [...new Set(questions?.map(q => q.test_id) || [])]
+      
+      if (testIds.length === 0) {
+        setTests([])
+        setLoading(false)
+        return
+      }
+
+      // Fetch tests that have questions for this subject
+      const { data: testsData, error: testsError } = await supabase
+        .from('tests')
+        .select('*')
+        .in('id', testIds)
+        .order('created_at', { ascending: false })
+
+      if (testsError) {
+        console.error('Error fetching tests:', testsError)
+        throw testsError
+      }
+
+      console.log('Fetched tests:', testsData)
+      setTests(testsData || [])
+    } catch (error) {
+      console.error('Error fetching tests:', error)
+      toast({
+        title: "Failed to load tests",
+        description: error instanceof Error ? error.message : "Unknown error",
+        variant: "destructive"
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleStartTest = (testId: string) => {
+    if (trialStatus === 'expired') {
+      toast({
+        title: "Trial Expired",
+        description: "Please upgrade to premium to access tests",
+        variant: "destructive"
+      })
+      return
+    }
+    navigate(`/quiz/${testId}`)
+  }
 
   const getDifficultyColor = (questionCount: number) => {
     if (questionCount <= 10) return 'bg-green-100 text-green-800'
@@ -72,7 +118,7 @@ const TestList = () => {
     return Math.max(15, Math.round(questionCount * 1.5))
   }
 
-  if (loading) {
+  if (loading || trialStatus === 'loading') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
         <div className="text-center">
@@ -106,6 +152,9 @@ const TestList = () => {
         </div>
       </div>
 
+      {/* Premium Banner */}
+      {trialStatus === 'expired' && <PremiumBanner />}
+
       {/* Tests Grid */}
       <div className="max-w-6xl mx-auto px-4 py-8">
         {tests.length === 0 ? (
@@ -119,9 +168,10 @@ const TestList = () => {
             {tests.map((test) => {
               const difficulty = getDifficultyLevel(test.total_questions)
               const duration = getEstimatedDuration(test.total_questions)
+              const isDisabled = trialStatus === 'expired'
               
               return (
-                <Card key={test.id} className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-0 shadow-md">
+                <Card key={test.id} className={`group hover:shadow-lg transition-all duration-300 cursor-pointer border-0 shadow-md ${isDisabled ? 'opacity-50' : ''}`}>
                   <CardHeader className="pb-3">
                     <div className="flex justify-between items-start mb-2">
                       <CardTitle className="text-xl font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
@@ -149,11 +199,12 @@ const TestList = () => {
                     </div>
                     
                     <Button 
-                      onClick={() => navigate(`/quiz/${test.id}`)}
+                      onClick={() => handleStartTest(test.id)}
+                      disabled={isDisabled}
                       className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold py-2 rounded-full transition-all group-hover:scale-105"
                     >
                       <Play className="w-4 h-4 mr-2" />
-                      Start Test
+                      {isDisabled ? 'Premium Required' : 'Start Test'}
                     </Button>
                   </CardContent>
                 </Card>
