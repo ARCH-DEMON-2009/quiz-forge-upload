@@ -32,21 +32,13 @@ export const TestManager = () => {
     }
   }
 
-  const deleteTest = async (testId: number, testTitle: string) => {
+  const deleteTest = async (testId: string, testTitle: string) => {
     if (!confirm(`Are you sure you want to delete "${testTitle}"? This will also delete all associated questions.`)) {
       return
     }
 
     try {
-      // Delete questions first (foreign key constraint)
-      const { error: questionsError } = await supabase
-        .from('questions')
-        .delete()
-        .eq('test_id', testId)
-
-      if (questionsError) throw questionsError
-
-      // Delete test
+      // Delete test (questions will be deleted automatically due to cascade)
       const { error: testError } = await supabase
         .from('tests')
         .delete()
@@ -99,7 +91,7 @@ export const TestManager = () => {
                   <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
                     <span className="flex items-center gap-1">
                       <Eye className="w-4 h-4" />
-                      {test.question_count} questions
+                      {test.total_questions} questions
                     </span>
                     <span>Created: {new Date(test.created_at).toLocaleDateString()}</span>
                   </div>

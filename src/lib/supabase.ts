@@ -6,19 +6,18 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
 export const supabase = createClient(supabaseUrl, supabaseKey)
 
-// Database types
+// Database types matching your actual schema
 export interface Test {
-  id: number
+  id: string
   title: string
   description: string
   created_at: string
-  question_count: number
+  total_questions: number
 }
 
 export interface Question {
-  id: number
-  test_id: number
-  question_id: number
+  id: string
+  test_id: string
   image: string
   options: string[]
   correct: string
@@ -27,9 +26,10 @@ export interface Question {
 }
 
 export interface PremiumUser {
-  id: number
+  id: string
   name: string
-  device: string
+  device_id: string
   expires_at: string
-  created_at: string
+  purchased_at: string
+  payment_id: string
 }

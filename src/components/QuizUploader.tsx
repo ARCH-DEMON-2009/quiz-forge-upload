@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -117,13 +116,13 @@ export const QuizUploader = () => {
 
     setIsUploading(true)
     try {
-      // Insert test record
+      // Insert test record with correct column name
       const { data: testData, error: testError } = await supabase
         .from('tests')
         .insert({
           title: title.trim(),
           description: description.trim(),
-          question_count: parsedQuestions.length
+          total_questions: parsedQuestions.length
         })
         .select()
         .single()
@@ -133,7 +132,6 @@ export const QuizUploader = () => {
       // Insert questions
       const questionsToInsert = parsedQuestions.map(q => ({
         test_id: testData.id,
-        question_id: q.id,
         image: q.image,
         options: q.options,
         correct: q.correct,
