@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { BookOpen, Beaker, Calculator, Crown, Clock } from 'lucide-react'
+import { BookOpen, Beaker, Calculator, Crown, Clock, Settings } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { TrialStatus } from '@/components/TrialStatus'
 import { PremiumBanner } from '@/components/PremiumBanner'
@@ -70,6 +70,16 @@ const Index = () => {
       <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white">
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative max-w-6xl mx-auto px-4 py-12">
+          <div className="absolute top-4 right-4">
+            <Button
+              onClick={() => navigate('/admin')}
+              variant="outline"
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              Admin
+            </Button>
+          </div>
           <div className="text-center">
             <div className="flex justify-center mb-6">
               <img 
